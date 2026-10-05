@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta name="google-site-verification" content="Ih_fizOc6QK2dZ6PCCXIy3YxdIQIgFuy2FI1u1TEu64" /><meta charset="utf-8"><script>try{var h=document.documentElement,m=matchMedia('(prefers-reduced-motion:reduce)').matches;if(!m)h.classList.add('js');if(!m&&!localStorage.getItem('evs'))h.classList.add('fv')}catch(e){}</script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><script>try{var h=document.documentElement,m=matchMedia('(prefers-reduced-motion:reduce)').matches;if(!m)h.classList.add('js');if(!m&&!localStorage.getItem('evs'))h.classList.add('fv')}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EVANNOS Landscaping Services Pro | Nairobi</title>
 <meta name="description" content="Professional landscaping, gardening and outdoor maintenance in Nairobi and its environs. Call or WhatsApp 0740 443 702.">
@@ -497,25 +497,46 @@ if(matchMedia('(pointer:fine)').matches){var c=$('#cur'),cx=0,cy=0,tx=0,ty=0;add
 </div>
 <script>
 (function(){
- const box=document.getElementById('ev-chat'),btn=document.getElementById('ev-chat-btn'),close=document.getElementById('ev-chat-x'),msgs=document.getElementById('ev-chat-msgs'),form=document.getElementById('ev-chat-form'),input=document.getElementById('ev-chat-input');
- let history=[];
- const faq={
-  services:'Evannos provides lawn installation and maintenance, garden design and maintenance, flowers and ornamental plants, tree planting/pruning/shaping, irrigation setup and maintenance, compound cleaning, and complete landscape management.',
-  quote:'You can request a free quote using the form on the website, call 0740 443 702, or message Evannos on WhatsApp. Share your location, the service you need, and photos if possible.',
-  area:'Evannos serves Nairobi and its environs. Tell us your estate or area and the team can confirm availability.',
-  irrigation:'Yes. Evannos offers irrigation setup and maintenance to help keep landscapes consistently watered.'
- };
- function add(text,who){const d=document.createElement('div');d.className='evm '+who;d.textContent=text;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
- add('Hi! I’m the Evannos landscaping assistant. Ask me about our services, quotes, garden care, lawns, trees, irrigation, or service area.','ai');
- function open(){box.classList.add('on');input.focus()}btn.onclick=open;close.onclick=()=>box.classList.remove('on');
- document.querySelectorAll('#ev-chat-quick button').forEach(b=>b.onclick=()=>{input.value=b.textContent;form.requestSubmit()});
- form.addEventListener('submit',async e=>{e.preventDefault();const q=input.value.trim();if(!q)return;input.value='';add(q,'user');const low=q.toLowerCase();
-  const quick=low.includes('service')?faq.services:low.includes('quote')||low.includes('price')||low.includes('cost')?faq.quote:low.includes('where')||low.includes('area')||low.includes('nairobi')?faq.area:low.includes('irrig')?faq.irrigation:null;
-  if(quick){add(quick,'ai');return}
-  const thinking=add('Let me check that for you…','ai');
-  try{history.push({role:'user',content:q});const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history.slice(-8)})});if(!r.ok)throw new Error('chat');const data=await r.json();thinking.textContent=data.answer||'Please contact Evannos on 0740 443 702 for confirmation.';history.push({role:'assistant',content:thinking.textContent})}
-  catch(err){thinking.textContent='I can help with Evannos services, quotes, service areas, lawns, gardens, trees and irrigation. For anything else, please call or WhatsApp 0740 443 702.'}
- });
+const box=document.getElementById('ev-chat'),btn=document.getElementById('ev-chat-btn'),close=document.getElementById('ev-chat-x'),msgs=document.getElementById('ev-chat-msgs'),form=document.getElementById('ev-chat-form'),input=document.getElementById('ev-chat-input');
+const phone='0740 443 702';
+const rules=[
+[/\b(service|services|offer|do you do)\b/,'Evannos provides lawn installation and maintenance, grass cutting and trimming, garden design and maintenance, flowers and ornamental plants, tree planting/pruning/shaping, irrigation setup and maintenance, compound cleaning, and complete landscape management.'],
+[/\b(lawn|grass|turf)\b/,'Evannos can help with lawn installation, grass cutting, edging, trimming and ongoing lawn maintenance. The right approach depends on grass type, soil, sunlight, drainage and use of the area.'],
+[/\b(garden design|landscape design|garden layout)\b/,'Yes. Garden and landscape design should consider the space, sunlight, soil, drainage, plants, privacy, access and how much maintenance you want. Send photos and your location for a more useful assessment.'],
+[/\b(garden maintenance|garden care|weeding|weeds)\b/,'Garden maintenance can include weeding, pruning, trimming, planting care, cleanup and keeping planted areas healthy and presentable.'],
+[/\b(tree|trees|pruning|hedge|hedges)\b/,'Evannos offers tree planting, pruning and shaping. Proper pruning depends on species, size, condition and purpose. For large or hazardous trees, request an assessment rather than attempting risky work yourself.'],
+[/\b(plant|plants|flower|flowers|ornamental)\b/,'Plant selection should match sunlight, soil, drainage, water availability, space and the desired appearance. Evannos can help with flowers and ornamental planting.'],
+[/\b(irrigation|sprinkler|sprinklers|drip|watering system)\b/,'Yes. Evannos offers irrigation setup and maintenance. The suitable system depends on landscape size, plants, water source, pressure and layout.'],
+[/\b(waterlogged|drainage|flood|flooding|standing water)\b/,'Poor drainage can damage lawns and plants. Solutions depend on the cause and may involve grading, soil improvement or drainage work. A site assessment is best before choosing a solution.'],
+[/\b(soil|fertili[sz]er|compost|manure)\b/,'Healthy landscaping starts with suitable soil. Soil improvement may involve organic matter, compost or appropriate fertilisation, but the treatment should match the plants and soil condition.'],
+[/\b(pest|pests|insect|insects|disease|fungus|fungal)\b/,'Plant problems can have several causes, so avoid applying chemicals blindly. Share a clear photo and describe the symptoms so the problem can be assessed more accurately.'],
+[/\b(clean|cleaning|compound|debris|leaves)\b/,'Evannos also provides compound cleaning and outdoor maintenance to keep residential and commercial outdoor spaces neat and presentable.'],
+[/\b(office|school|institution|apartment|commercial|business)\b/,'Evannos works with homes, offices, apartments, commercial properties, schools and institutions, including ongoing landscape-maintenance programs.'],
+[/\b(home|house|residential)\b/,'Yes. Evannos provides landscaping and outdoor maintenance for homes and residential compounds, including lawns, gardens, planting, trees and irrigation.'],
+[/\b(price|pricing|cost|how much|charge|rate|budget)\b/,'There is no single landscaping price. Cost depends on area size, site condition, plants, materials, labour, irrigation and maintenance scope. For an accurate quote, share your location, service needed, approximate size and photos.'],
+[/\b(quote|quotation|estimate)\b/,'To request a quote, tell Evannos the service you need, your location, approximate area and any important requirements. Photos help. You can also call or WhatsApp '+phone+'.'],
+[/\b(where|area|nairobi|serve|coverage|location)\b/,'Evannos serves Nairobi and its environs. Tell us your estate, neighbourhood or nearby landmark and the team can confirm coverage.'],
+[/\b(available|availability|schedule|appointment|visit|when)\b/,'Availability depends on the team schedule and project requirements. Contact Evannos on '+phone+' with your preferred date, location and service so the team can confirm.'],
+[/\b(whatsapp|call|contact|phone|number)\b/,'You can call or WhatsApp Evannos Landscaping Services Pro on '+phone+'.'],
+[/\b(maintenance|maintain|monthly|weekly|recurring|regular)\b/,'Yes. Recurring maintenance is available. Frequency depends on lawn growth, garden size, plant types, season and the standard you want to maintain.'],
+[/\b(mow|mowing|cut grass|trim grass)\b/,'Regular grass cutting keeps a lawn neat and healthy. Cutting height and frequency should be adjusted to the grass type, season and growth rate.'],
+[/\b(mulch|mulching)\b/,'Mulching can conserve soil moisture, moderate soil temperature and reduce weed pressure. It should be applied appropriately without piling it directly against plant stems or tree trunks.'],
+[/\b(privacy|screening|boundary plants)\b/,'Natural privacy can be created with suitable hedges, shrubs or trees selected for the available space, sunlight, mature size and maintenance needs.'],
+[/\b(shade|sunlight|full sun|shade plants)\b/,'Plant choice should match available sunlight. Full-sun, partial-shade and shade conditions support different plants, so tell us how much direct sunlight the area receives.'],
+[/\b(best plant|which plant|recommend plant)\b/,'There is no single best plant for every garden. Selection depends on sunlight, soil, drainage, water, space and maintenance needs.'],
+[/\b(tree planting|plant a tree|new tree)\b/,'Tree planting should consider species, mature size, root space, soil, drainage and distance from buildings or utilities.'],
+[/\b(season|rain|rainy|dry season|weather)\b/,'Landscaping schedules should account for rainfall, soil moisture and local weather. Planting and watering can be adjusted to current conditions.'],
+[/\b(how long|duration|days|time to complete)\b/,'Project duration depends on size, complexity, preparation, materials and planting requirements. The team can confirm a timeline after reviewing the project.'],
+[/\b(payment|pay|deposit|mpesa|m-pesa|guarantee|warranty)\b/,'For payment terms, deposits, accepted payment methods or warranties, please confirm directly with Evannos on '+phone+' rather than relying on an unconfirmed website answer.'],
+[/\b(hello|hi|hey|good morning|good afternoon|good evening)\b/,'Hello! Welcome to Evannos Landscaping Services Pro. I can help with landscaping, lawns, gardens, plants, trees, irrigation, maintenance, pricing, quotes and service areas. How can I help?'],
+[/\b(thank|thanks|thank you)\b/,'You’re welcome. If you would like a quote or want to discuss your outdoor space, call or WhatsApp Evannos on '+phone+'.']
+];
+function add(t,w){const d=document.createElement('div');d.className='evm '+w;d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
+function answer(q){const n=q.toLowerCase();for(const [re,a] of rules)if(re.test(n))return a;return 'I can help with Evannos services, lawns, gardens, plants, trees, irrigation, maintenance, drainage, pricing, quotes and service areas. For a site-specific question, send your location and a photo if possible. For exact pricing or availability, call or WhatsApp Evannos on '+phone+'.'}
+add('Hi! I’m the Evannos Landscaping Services Pro assistant. I can answer questions about landscaping, lawns, gardens, plants, trees, irrigation, maintenance, pricing and service areas. How can I help?','ai');
+function open(){box.classList.add('on');input.focus()}btn.onclick=open;close.onclick=()=>box.classList.remove('on');
+document.querySelectorAll('#ev-chat-quick button').forEach(b=>b.onclick=()=>{input.value=b.textContent;form.requestSubmit()});
+form.addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim();if(!q)return;input.value='';add(q,'user');setTimeout(()=>add(answer(q),'ai'),100)});
 })();
 </script>
 </body></html>
