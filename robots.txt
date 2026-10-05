@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://evannos-landscaping.vercel.app/sitemap.xml
